@@ -131,6 +131,51 @@ img {
   top: 16px;
 }
 
+/* Two-tier header (logo strip + dark nav) */
+.siteHeader {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.topLogoBar {
+  background: linear-gradient(180deg, #d1b07a, #b9925f);
+  border-bottom: 1px solid rgba(20, 20, 20, 0.25);
+}
+
+.topLogoInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  min-width: 0;
+}
+
+.topLogoRight {
+  font-weight: 950;
+  color: rgba(0, 0, 0, 0.65);
+  letter-spacing: 0.22em;
+  font-size: 12px;
+}
+
+.navBar {
+  background: #2a2018;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.navBarInner {
+  padding: 0;
+}
+
+.topNavTabs {
+  padding: 0;
+  justify-content: center;
+}
+
+.topNavLink {
+  border-radius: 0;
+}
+
 header.topNav {
   position: sticky;
   top: 0;
@@ -208,29 +253,27 @@ nav.tabNav::-webkit-scrollbar {
 
 .tabLink {
   text-decoration: none;
-  padding: 10px 14px;
-  border-radius: 999px;
-  border: 1px solid transparent;
-  color: var(--muted);
-  transition: transform 140ms ease, background 180ms ease, border-color 180ms ease, color 180ms ease;
+  padding: 10px 12px;
+  border-radius: 0;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.72);
+  transition: background 180ms ease, color 180ms ease;
   white-space: nowrap;
-  font-weight: 600;
-  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 900;
+  font-size: 11px;
 }
 
 .tabLink:hover {
-  transform: translateY(-1px);
-  border-color: var(--border);
-  color: var(--text);
-  background: var(--surface-2);
+  color: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.07);
 }
 
 .tabLinkActive {
-  color: var(--text);
-  border-color: rgba(79, 70, 229, 0.35);
-  background:
-    radial-gradient(400px 80px at 20% 20%, rgba(79, 70, 229, 0.15), transparent 60%),
-    linear-gradient(180deg, rgba(79, 70, 229, 0.12), rgba(79, 70, 229, 0.06));
+  color: rgba(255, 255, 255, 1);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .navCtas {
@@ -796,6 +839,195 @@ footer.siteFooter {
 @media (max-width: 420px) {
   .brandText span {
     display: none;
+  }
+}
+
+/* Home hero (framed "business finder" look) */
+.homeHero {
+  background: linear-gradient(180deg, #3b2a22 0%, #2a1f18 100%);
+  padding: 18px 0 30px;
+}
+
+.homeHeroFrame {
+  position: relative;
+  width: min(980px, 100%);
+  height: 520px;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 8px solid rgba(0, 0, 0, 0.35);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.25);
+  background: #1a120e;
+}
+
+.homeHeroPhoto {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center 45%;
+  opacity: 0.18;
+  transform: scale(1.04);
+  filter: saturate(1.15) contrast(1.05);
+}
+
+.homeHeroTint {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(900px 320px at 50% 10%, rgba(209, 176, 122, 0.35), transparent 60%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.65) 100%);
+}
+
+.homeHeroBottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 18px;
+}
+
+.businessTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.businessGlyph {
+  width: 42px;
+  height: 42px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(209, 176, 122, 0.95);
+  font-weight: 900;
+}
+
+.businessTitle {
+  font-family: var(--serif);
+  color: rgba(255, 255, 255, 0.88);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.businessSearchPanel {
+  margin-top: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(12, 9, 7, 0.55);
+  backdrop-filter: blur(10px);
+  padding: 14px;
+}
+
+.businessSearchTabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.bizTabActive {
+  background: #e11d48;
+  color: #fff;
+  padding: 7px 10px;
+  border-radius: 12px;
+  font-weight: 950;
+  font-size: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.bizTab {
+  background: rgba(225, 29, 72, 0.18);
+  color: rgba(255, 255, 255, 0.88);
+  padding: 7px 10px;
+  border-radius: 12px;
+  font-weight: 950;
+  font-size: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.businessSearchRow {
+  margin-top: 12px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.bizField {
+  flex: 1;
+  min-width: 160px;
+}
+
+.bizLabel {
+  display: block;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 950;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 11px;
+}
+
+.bizSelect {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(0, 0, 0, 0.22);
+  color: rgba(255, 255, 255, 0.95);
+  padding: 10px 12px;
+  font: inherit;
+  font-weight: 900;
+}
+
+.bizSearchButtonWrap {
+  flex: 0 0 auto;
+}
+
+.bizSearchButton {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 16px;
+  min-width: 160px;
+  background: linear-gradient(180deg, #fb7185, #e11d48);
+  color: #fff;
+  font-weight: 1000;
+  letter-spacing: 0.12em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.bizSearchButtonIcon {
+  font-size: 16px;
+}
+
+.bizHelper {
+  margin: 10px 0 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-weight: 800;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.homeHeroCtaRow {
+  display: flex;
+  justify-content: center;
+  margin-top: 14px;
+}
+
+@media (max-width: 940px) {
+  .homeHeroFrame {
+    height: 640px;
+  }
+  .businessSearchRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .bizSearchButton {
+    width: 100%;
+    min-width: 0;
   }
 }
 
