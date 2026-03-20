@@ -1,14 +1,15 @@
 import React from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { navItems } from '../content/site'
 import type { NavItem } from '../content/site'
 
-function TabLink({ item }: { item: NavItem }) {
+function TabLink({ item, onNavigate }: { item: NavItem; onNavigate?: () => void }) {
   return (
     <NavLink
       to={item.to}
       className={({ isActive }) => `tabLink ${isActive ? 'tabLinkActive' : ''}`}
       end={item.to === '/'}
+      onClick={onNavigate}
     >
       {item.label}
     </NavLink>
@@ -39,18 +40,11 @@ export default function TopNav() {
 
           <nav className="tabNav navDesktop" aria-label="Primary navigation">
             {navItems.map((item) => (
-              <div key={item.key} onClick={handleNavClick}>
-                <TabLink item={item} />
-              </div>
+              <TabLink key={item.key} item={item} onNavigate={handleNavClick} />
             ))}
           </nav>
 
           <div className="navCtas">
-            <Link className="btn btnPrimary navDesktop" to="/contact">
-              Talk to an Advisor
-              <span aria-hidden="true">→</span>
-            </Link>
-
             <button
               className="mobileToggle"
               type="button"
@@ -76,10 +70,6 @@ export default function TopNav() {
                 {item.label}
               </NavLink>
             ))}
-
-            <Link className="btn btnPrimary mobileCta" to="/contact" onClick={() => setOpen(false)}>
-              Talk to an Advisor <span aria-hidden="true">→</span>
-            </Link>
           </div>
         </div>
       </header>

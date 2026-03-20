@@ -152,6 +152,8 @@ header.topNav {
   justify-content: space-between;
   padding: 14px 0;
   gap: 14px;
+  min-width: 0;
+  overflow-x: hidden;
 }
 
 .brand {
@@ -159,7 +161,7 @@ header.topNav {
   align-items: center;
   gap: 10px;
   text-decoration: none;
-  min-width: 240px;
+  min-width: 0;
 }
 
 .brandMark {
@@ -193,6 +195,15 @@ nav.tabNav {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
+  flex: 1;
+  justify-content: center;
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+}
+
+nav.tabNav::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
 }
 
 .tabLink {
@@ -779,6 +790,12 @@ footer.siteFooter {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+  }
+}
+
+@media (max-width: 420px) {
+  .brandText span {
+    display: none;
   }
 }
 

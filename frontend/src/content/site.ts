@@ -18,9 +18,6 @@ export const site = {
 export const navItems: NavItem[] = [
   { key: 'home', label: 'Home', to: '/' },
   { key: 'about', label: 'About Us', to: '/about' },
-  { key: 'businesses', label: 'Businesses For Sale', to: '/businesses', description: 'Browse featured deals.' },
-  { key: 'process', label: 'Our Process', to: '/process' },
-  { key: 'faq', label: 'FAQ', to: '/faq' },
   { key: 'contact', label: 'Contact Us', to: '/contact' },
 ]
 

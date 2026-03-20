@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
-import DealCard from '../components/DealCard'
 import SectionHeader from '../components/SectionHeader'
-import { featuredListings, navItems, site } from '../content/site'
+import { site } from '../content/site'
 
 export default function Home() {
   return (
@@ -20,11 +19,8 @@ export default function Home() {
             </p>
 
             <div className="heroCtas">
-              <Link className="btn btnPrimary" to={navItems.find((n) => n.key === 'businesses')?.to || '/businesses'}>
-                View Featured Deals <span aria-hidden="true">→</span>
-              </Link>
-              <Link className="btn" to={navItems.find((n) => n.key === 'contact')?.to || '/contact'}>
-                Talk to an Advisor <span aria-hidden="true">↗</span>
+              <Link className="btn btnPrimary" to="/contact">
+                Contact Us <span aria-hidden="true">→</span>
               </Link>
             </div>
 
@@ -70,34 +66,8 @@ export default function Home() {
                   <p>We support negotiations and help ensure continuity after transfer.</p>
                 </div>
               </div>
-
-              <div className="ctaRow" style={{ marginTop: 14 }}>
-                <Link className="btn btnPrimary" to="/process">
-                  Our process <span aria-hidden="true">→</span>
-                </Link>
-              </div>
             </div>
           </aside>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="container">
-          <SectionHeader
-            title="Featured businesses for sale"
-            description="Sample listings that show the kind of diligence-ready opportunities we source."
-            right={
-              <Link className="btn" to="/businesses">
-                Browse all <span aria-hidden="true">→</span>
-              </Link>
-            }
-          />
-
-          <div className="listingGrid">
-            {featuredListings.map((deal) => (
-              <DealCard key={deal.id} deal={deal} />
-            ))}
-          </div>
         </div>
       </section>
 
