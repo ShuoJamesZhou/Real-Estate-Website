@@ -1,0 +1,6 @@
+### Local/dev-only files (not for GitHub Pages)
+local-serve.ps1
+
+# OS/editor
+.DS_Store
+
