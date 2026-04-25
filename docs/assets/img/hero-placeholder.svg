@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1000" viewBox="0 0 2400 1000">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b0f1a"/>
+      <stop offset="1" stop-color="#0f1626"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="28%" cy="10%" r="60%">
+      <stop offset="0" stop-color="#5aba47" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#5aba47" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="70%" cy="0%" r="65%">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="haze" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#000000" stop-opacity="0.65"/>
+      <stop offset="0.55" stop-color="#000000" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" />
+      <feColorMatrix type="matrix"
+        values="
+          1 0 0 0 0
+          0 1 0 0 0
+          0 0 1 0 0
+          0 0 0 0.08 0" />
+    </filter>
+  </defs>
+
+  <rect width="2400" height="1000" fill="url(#bg)"/>
+  <rect width="2400" height="1000" fill="url(#glowA)"/>
+  <rect width="2400" height="1000" fill="url(#glowB)"/>
+
+  <!-- Abstract skyline blocks -->
+  <g opacity="0.55">
+    <rect x="1480" y="200" width="110" height="520" rx="14" fill="#1a2436"/>
+    <rect x="1620" y="260" width="150" height="470" rx="16" fill="#182033"/>
+    <rect x="1800" y="170" width="130" height="590" rx="16" fill="#1b2a40"/>
+    <rect x="1960" y="310" width="180" height="430" rx="18" fill="#141c2e"/>
+    <rect x="2160" y="240" width="120" height="510" rx="16" fill="#19243a"/>
+  </g>
+
+  <!-- Light streaks -->
+  <g opacity="0.35">
+    <path d="M0,720 C420,640 760,640 1200,700 C1640,760 1950,740 2400,650 L2400,1000 L0,1000 Z" fill="#000000"/>
+    <path d="M0,730 C420,650 780,650 1210,715 C1650,780 1950,760 2400,670" fill="none" stroke="#5aba47" stroke-opacity="0.25" stroke-width="2"/>
+    <path d="M0,760 C520,700 820,700 1260,760 C1650,810 2020,800 2400,720" fill="none" stroke="#ffffff" stroke-opacity="0.12" stroke-width="2"/>
+  </g>
+
+  <!-- Left-side dark haze for readability -->
+  <rect width="2400" height="1000" fill="url(#haze)"/>
+
+  <!-- Subtle grain -->
+  <rect width="2400" height="1000" filter="url(#noise)" opacity="0.75"/>
+</svg>
+

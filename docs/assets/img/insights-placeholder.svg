@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1000" viewBox="0 0 2400 1000">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0d1322"/>
+      <stop offset="1" stop-color="#0a0f1a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="28%" r="65%">
+      <stop offset="0" stop-color="#5aba47" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#5aba47" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch" />
+      <feColorMatrix type="matrix"
+        values="
+          1 0 0 0 0
+          0 1 0 0 0
+          0 0 1 0 0
+          0 0 0 0.08 0" />
+    </filter>
+  </defs>
+
+  <rect width="2400" height="1000" fill="url(#bg)"/>
+  <rect width="2400" height="1000" fill="url(#glow)"/>
+
+  <!-- Abstract aerial map grid -->
+  <g opacity="0.35" fill="none" stroke="#ffffff" stroke-opacity="0.08">
+    <path d="M-50 760 C 200 620, 520 640, 820 560 C 1120 480, 1400 420, 1700 500 C 2000 580, 2200 560, 2500 460" stroke-width="20" stroke-linecap="round"/>
+    <path d="M-50 420 C 250 500, 520 460, 780 520 C 1040 580, 1320 660, 1600 620 C 1880 580, 2140 620, 2500 740" stroke-width="14" stroke-linecap="round"/>
+    <path d="M200 1000 C 420 820, 540 740, 700 600 C 860 460, 980 360, 1120 260" stroke-width="10" stroke-linecap="round"/>
+    <path d="M1680 1000 C 1520 840, 1400 740, 1240 620 C 1080 500, 960 410, 820 300" stroke-width="10" stroke-linecap="round"/>
+  </g>
+
+  <!-- Blocks -->
+  <g opacity="0.35">
+    <rect x="240" y="600" width="180" height="120" rx="18" fill="#ffffff" fill-opacity="0.06"/>
+    <rect x="520" y="520" width="220" height="140" rx="18" fill="#ffffff" fill-opacity="0.05"/>
+    <rect x="820" y="580" width="240" height="150" rx="18" fill="#ffffff" fill-opacity="0.06"/>
+    <rect x="1180" y="520" width="260" height="160" rx="18" fill="#ffffff" fill-opacity="0.05"/>
+    <rect x="1540" y="570" width="220" height="140" rx="18" fill="#ffffff" fill-opacity="0.06"/>
+    <rect x="1840" y="520" width="260" height="160" rx="18" fill="#ffffff" fill-opacity="0.05"/>
+  </g>
+
+  <!-- Center dark vignette for readable text -->
+  <rect x="0" y="0" width="2400" height="1000" fill="#000000" opacity="0.28"/>
+  <ellipse cx="1200" cy="520" rx="740" ry="360" fill="#000000" opacity="0.35"/>
+
+  <rect width="2400" height="1000" filter="url(#noise)" opacity="0.85"/>
+</svg>
+

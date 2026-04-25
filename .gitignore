@@ -1,6 +1,15 @@
-### Local/dev-only files (not for GitHub Pages)
-local-serve.ps1
-
-# OS/editor
+### OS/editor
 .DS_Store
+Thumbs.db
+*.swp
+*~
 
+### Node (if ever used again)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+### Local scripts
+local-serve.ps1
