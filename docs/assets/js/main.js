@@ -24,12 +24,41 @@
     return `<a class="${classes.join(' ')}" href="${escapeHtml(action.href)}">${escapeHtml(action.label)}<span aria-hidden="true">+</span></a>`;
   }
 
+  function sectionHref(section) {
+    return section.route || `#${section.id}`;
+  }
+
   function imageUrl(src, fallback) {
     try {
       return new URL(src || fallback, document.baseURI).href;
     } catch {
       return fallback;
     }
+  }
+
+  function logoMarkup() {
+    if (!brand.logo) return escapeHtml(brand.mark || '');
+
+    return `<img class="siteLogo" data-brand-logo src="${escapeHtml(brand.logo)}" alt="${escapeHtml(brand.name || 'Company logo')}" />`;
+  }
+
+  function detailIcon(name) {
+    const icons = {
+      phone: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.7 16.9 14a1.7 1.7 0 0 0-2 .5l-.9 1.1a13.2 13.2 0 0 1-5.6-5.6l1.1-.9a1.7 1.7 0 0 0 .5-2L8.3 3.5A1.7 1.7 0 0 0 6.4 2.6L3.3 3.3A1.7 1.7 0 0 0 2 5c0 9.4 7.6 17 17 17 .8 0 1.5-.5 1.7-1.3l.7-3.1a1.7 1.7 0 0 0-.9-1.9Z"/></svg>',
+      address: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a8 8 0 0 0-8 8c0 5.4 6.7 11.4 7.4 12 .4.3.9.3 1.2 0 .7-.6 7.4-6.6 7.4-12a8 8 0 0 0-8-8Zm0 11.2A3.2 3.2 0 1 1 12 6.8a3.2 3.2 0 0 1 0 6.4Z"/></svg>',
+      hours: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.1 12.6a1 1 0 0 1-1.4.3l-3.2-2.1A1 1 0 0 1 11 12V7a1 1 0 1 1 2 0v4.5l2.8 1.8a1 1 0 0 1 .3 1.3Z"/></svg>',
+    };
+
+    return `<span class="detailIcon">${icons[name] || ''}</span>`;
+  }
+
+  function detailRow(type, label, href = '') {
+    if (!label) return '';
+
+    const content = `${detailIcon(type)}<span>${escapeHtml(label)}</span>`;
+    return href
+      ? `<a class="contactDetail" href="${escapeHtml(href)}">${content}</a>`
+      : `<span class="contactDetail">${content}</span>`;
   }
 
   function sectionIntro(section) {
@@ -42,20 +71,38 @@
     `;
   }
 
+  function sectionTitle(section) {
+    if (section.id === 'home' || !section.nav) return '';
+
+    return `<p class="sectionTitle">${escapeHtml(section.nav)}</p>`;
+  }
+
   function renderHero(section) {
     const stats = Array.isArray(section.stats) ? section.stats : [];
     const actions = Array.isArray(section.actions) ? section.actions : [];
+    const homeIntro = section.introTitle || section.introText
+      ? `
+            <div class="heroIntro">
+              ${section.introTitle ? `<h1>${escapeHtml(section.introTitle)}</h1>` : ''}
+              ${section.introText ? `<p>${escapeHtml(section.introText)}</p>` : ''}
+            </div>
+          `
+      : '';
+
     return `
       <section id="${escapeHtml(section.id)}" class="homeHero band">
+        <div class="container">
+          ${homeIntro}
+        </div>
         <div class="container heroGrid">
           <div class="heroCopy">
-            <h1>${escapeHtml(section.title)}</h1>
+            <h2>${escapeHtml(section.title)}</h2>
             <p>${escapeHtml(section.text)}</p>
             <div class="ctaRow">
               ${actions.map((item, index) => button(item, index === 0 ? 'primary' : 'secondary')).join('')}
             </div>
           </div>
-          <div class="heroMedia" style="--hero-image: url('${escapeHtml(imageUrl(section.image, './assets/img/hero-placeholder.svg'))}')" role="img" aria-label="${escapeHtml(section.title)}">
+          <div class="heroMedia" style="--hero-image: url('${escapeHtml(imageUrl(section.image, './assets/images/hero-placeholder.svg'))}')" role="img" aria-label="${escapeHtml(section.title)}">
             <div class="heroStats">
               ${stats.map((stat) => `
                 <div>
@@ -73,23 +120,40 @@
   function renderCta(section) {
     return `
       <section id="${escapeHtml(section.id)}" class="band bandAccent">
-        <div class="container accentBar">
-          <div>
-            <h2>${escapeHtml(section.title)}</h2>
-            ${section.text ? `<p>${escapeHtml(section.text)}</p>` : ''}
+        <div class="container">
+          ${sectionTitle(section)}
+          <div class="accentBar">
+            <div>
+              <h2>${escapeHtml(section.title)}</h2>
+              ${section.text ? `<p>${escapeHtml(section.text)}</p>` : ''}
+            </div>
+            ${button(section.action, 'primary')}
           </div>
-          ${button(section.action, 'primary')}
         </div>
       </section>
     `;
   }
 
   function renderStatement(section) {
+    const cards = Array.isArray(section.cards) ? section.cards : [];
+
     return `
       <section id="${escapeHtml(section.id)}" class="section band bandStatement">
         <div class="container statementCopy">
-          <h2>${escapeHtml(section.title)}</h2>
-          ${section.text ? `<p>${escapeHtml(section.text)}</p>` : ''}
+          ${sectionTitle(section)}
+          ${cards.length ? `
+            <div class="statementCardGrid">
+              ${cards.map((card) => `
+                <article class="statementCard">
+                  <h2>${escapeHtml(card.title)}</h2>
+                  <p>${escapeHtml(card.text)}</p>
+                </article>
+              `).join('')}
+            </div>
+          ` : `
+            ${section.title ? `<h2>${escapeHtml(section.title)}</h2>` : ''}
+            ${section.text ? `<p>${escapeHtml(section.text)}</p>` : ''}
+          `}
         </div>
       </section>
     `;
@@ -100,6 +164,7 @@
     return `
       <section id="${escapeHtml(section.id)}" class="section band bandSoft">
         <div class="container">
+          ${sectionTitle(section)}
           ${sectionIntro(section)}
           <div class="grid3">
             ${cards.map((card) => `
@@ -119,15 +184,18 @@
     const points = Array.isArray(section.points) ? section.points : [];
     return `
       <section id="${escapeHtml(section.id)}" class="section band bandFeature">
-        <div class="container featureGrid">
-          <div class="featureMedia" style="--feature-image: url('${escapeHtml(imageUrl(section.image, './assets/img/insights-placeholder.svg'))}')" role="img" aria-label="${escapeHtml(section.title)}"></div>
-          <div class="featureCopy">
-            <h2>${escapeHtml(section.title)}</h2>
-            ${section.text ? `<p>${escapeHtml(section.text)}</p>` : ''}
-            <ul class="checkList">
-              ${points.map((point) => `<li>${escapeHtml(point)}</li>`).join('')}
-            </ul>
-            ${button(section.action, 'secondary')}
+        <div class="container">
+          ${sectionTitle(section)}
+          <div class="featureGrid">
+            <div class="featureMedia" style="--feature-image: url('${escapeHtml(imageUrl(section.image, './assets/images/insights-placeholder.svg'))}')" role="img" aria-label="${escapeHtml(section.title)}"></div>
+            <div class="featureCopy">
+              <h2>${escapeHtml(section.title)}</h2>
+              ${section.text ? `<p>${escapeHtml(section.text)}</p>` : ''}
+              <ul class="checkList">
+                ${points.map((point) => `<li>${escapeHtml(point)}</li>`).join('')}
+              </ul>
+              ${button(section.action, 'secondary')}
+            </div>
           </div>
         </div>
       </section>
@@ -139,6 +207,7 @@
     return `
       <section id="${escapeHtml(section.id)}" class="section band bandDeep">
         <div class="container">
+          ${sectionTitle(section)}
           ${sectionIntro(section)}
           <div class="stepList">
             ${steps.map((step, index) => `
@@ -159,6 +228,7 @@
     return `
       <section id="${escapeHtml(section.id)}" class="section band bandSoft">
         <div class="container">
+          ${sectionTitle(section)}
           ${sectionIntro(section)}
           <div class="faqList">
             ${items.map((item) => `
@@ -179,47 +249,65 @@
   function renderContact(section) {
     return `
       <section id="${escapeHtml(section.id)}" class="section band bandContact">
-        <div class="container contactGrid">
-          <div class="contactIntro">
-            <h2>${escapeHtml(section.title)}</h2>
-            ${section.text ? `<p>${escapeHtml(section.text)}</p>` : ''}
-            <div class="contactDetails">
-              ${brand.phone ? `<a href="${escapeHtml(brand.phoneHref || '#')}">${escapeHtml(brand.phone)}</a>` : ''}
-              ${brand.email ? `<a href="mailto:${escapeHtml(brand.email)}">${escapeHtml(brand.email)}</a>` : ''}
-              ${brand.address ? `<span>${escapeHtml(brand.address)}</span>` : ''}
+        <div class="container">
+          ${sectionTitle(section)}
+          <div class="contactGrid">
+            <div class="contactIntro">
+              <h2>${escapeHtml(section.title)}</h2>
+              ${section.text ? `<p>${escapeHtml(section.text)}</p>` : ''}
+              <div class="contactDetails">
+                ${detailRow('phone', brand.phone, brand.phoneHref || '#')}
+                ${detailRow('address', brand.address)}
+                ${detailRow('hours', brand.hours)}
+              </div>
+            </div>
+            <div class="contactCard">
+              <form method="post" data-endpoint="${escapeHtml(config.formEndpoint || '')}" novalidate>
+                <div class="hpField" aria-hidden="true">
+                  <label for="website">Website</label>
+                  <input id="website" name="website" autocomplete="off" tabindex="-1" />
+                </div>
+                <div class="formGrid">
+                  <div>
+                    <label class="srOnly" for="first_name">First name</label>
+                    <input id="first_name" name="first_name" placeholder="First name" autocomplete="given-name" />
+                  </div>
+                  <div>
+                    <label class="srOnly" for="last_name">Last name</label>
+                    <input id="last_name" name="last_name" placeholder="Last name" autocomplete="family-name" />
+                  </div>
+                  <div>
+                    <label class="srOnly" for="email">Email</label>
+                    <input id="email" name="email" placeholder="Email address" inputmode="email" autocomplete="email" />
+                  </div>
+                  <div>
+                    <label class="srOnly" for="phone">Phone</label>
+                    <input id="phone" name="phone" placeholder="Phone" inputmode="tel" autocomplete="tel" required />
+                  </div>
+                </div>
+                <div class="contactMessage">
+                  <label class="srOnly" for="message">Message</label>
+                  <textarea id="message" name="message" placeholder="Tell us what you are planning"></textarea>
+                </div>
+                <button class="btn btnPrimary contactSubmit" type="submit">Send enquiry<span aria-hidden="true">+</span></button>
+              </form>
             </div>
           </div>
-          <div class="contactCard">
-            <form method="post" data-endpoint="${escapeHtml(config.formEndpoint || '')}" novalidate>
-              <div class="hpField" aria-hidden="true">
-                <label for="website">Website</label>
-                <input id="website" name="website" autocomplete="off" tabindex="-1" />
-              </div>
-              <div class="formGrid">
-                <div>
-                  <label class="srOnly" for="first_name">First name</label>
-                  <input id="first_name" name="first_name" placeholder="First name" autocomplete="given-name" />
-                </div>
-                <div>
-                  <label class="srOnly" for="last_name">Last name</label>
-                  <input id="last_name" name="last_name" placeholder="Last name" autocomplete="family-name" />
-                </div>
-                <div>
-                  <label class="srOnly" for="email">Email</label>
-                  <input id="email" name="email" placeholder="Email address" inputmode="email" autocomplete="email" />
-                </div>
-                <div>
-                  <label class="srOnly" for="phone">Phone optional</label>
-                  <input id="phone" name="phone" placeholder="Phone optional" inputmode="tel" autocomplete="tel" />
-                </div>
-              </div>
-              <div class="contactMessage">
-                <label class="srOnly" for="message">Message</label>
-                <textarea id="message" name="message" placeholder="Tell us what you are planning"></textarea>
-              </div>
-              <button class="btn btnPrimary contactSubmit" type="submit">Send enquiry<span aria-hidden="true">+</span></button>
-            </form>
+        </div>
+      </section>
+    `;
+  }
+
+  function renderRouteCta(section) {
+    return `
+      <section id="${escapeHtml(section.id)}" class="section band bandNda">
+        <div class="container routeCta">
+          ${sectionTitle(section)}
+          <div>
+            <h2>${escapeHtml(section.title)}</h2>
+            ${section.text ? `<p>${escapeHtml(section.text)}</p>` : ''}
           </div>
+          ${button(section.action || { label: 'Open form', href: section.route || '#' }, 'primary')}
         </div>
       </section>
     `;
@@ -235,16 +323,24 @@
       steps: renderSteps,
       faq: renderFaq,
       contact: renderContact,
+      routeCta: renderRouteCta,
     };
     const render = renderers[section.type] || renderCards;
     return render(section);
   }
 
   function renderChrome() {
-    document.querySelectorAll('[data-brand-mark]').forEach((el) => { el.textContent = brand.mark || ''; });
-    document.querySelectorAll('[data-brand-name]').forEach((el) => { el.textContent = brand.name || 'Company Name'; });
-    document.querySelectorAll('[data-brand-tagline]').forEach((el) => { el.textContent = brand.tagline || ''; });
+    document.querySelectorAll('[data-brand-mark]').forEach((el) => {
+      const image = el.querySelector('[data-brand-logo]');
 
+      if (image) {
+        image.src = brand.logo || image.getAttribute('src') || '';
+        image.alt = brand.name || 'Company logo';
+        return;
+      }
+
+      el.textContent = brand.mark || '';
+    });
     const phone = document.querySelector('[data-header-phone]');
     if (phone) {
       phone.textContent = brand.phone || '';
@@ -254,23 +350,28 @@
     if (nav) {
       nav.innerHTML = sections
         .filter((section) => section.nav)
-        .map((section) => `<a class="topNavLink${section.type === 'contact' ? ' topNavCta' : ''}" href="#${escapeHtml(section.id)}">${escapeHtml(section.nav)}</a>`)
+        .map((section) => `<a class="topNavLink${section.type === 'contact' ? ' topNavCta' : ''}" href="${escapeHtml(sectionHref(section))}">${escapeHtml(section.nav)}</a>`)
         .join('');
     }
 
     if (footer) {
       footer.innerHTML = `
-        <div class="container footerGrid">
-          <div class="footerBrand">
-            <span class="brandMark" aria-hidden="true">${escapeHtml(brand.mark || '')}</span>
-            <div>
-              <strong>${escapeHtml(brand.name || 'Company Name')}</strong>
-              <span>${escapeHtml(brand.hours || '')}</span>
+        <div class="footerTop">
+          <div class="container footerMain">
+            <a class="footerBrand" href="#home" aria-label="Home">
+              <span class="brandMark${brand.logo ? ' siteLogoMark' : ''}" aria-hidden="true">${logoMarkup()}</span>
+            </a>
+            <div class="footerLegalLinks" aria-label="Legal links">
+              <a href="./confidential-agreement.html">Confidential Agreement</a>
+              <a href="./privacy-policy.html">Privacy Policy</a>
+              <a href="./disclaimer.html">Disclaimer</a>
             </div>
           </div>
-          <div class="footerMeta">
-            ${brand.address ? `<span>${escapeHtml(brand.address)}</span>` : ''}
-            ${brand.email ? `<a href="mailto:${escapeHtml(brand.email)}">${escapeHtml(brand.email)}</a>` : ''}
+        </div>
+        <div class="footerBottom">
+          <div class="container footerBottomInner">
+            <span>&copy; ${new Date().getFullYear()} ${escapeHtml(brand.name || 'Company Name')}</span>
+            <a href="#top">Back to top</a>
           </div>
         </div>
       `;
@@ -310,7 +411,7 @@
 
   function bindActiveNav() {
     const navSections = sections
-      .filter((section) => section.nav)
+      .filter((section) => section.nav && !section.route)
       .map((section) => ({ id: `#${section.id}`, el: document.getElementById(section.id) }))
       .filter((section) => section.el);
 
@@ -320,23 +421,35 @@
       if (active) active.classList.add('topNavLinkActive');
     }
 
+    function updateActiveNav() {
+      const y = window.scrollY + headerOffset() + 24;
+      const atPageEnd = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+      let current = navSections[0] ? navSections[0].id : '#home';
+
+      for (const section of navSections) {
+        const top = section.el.getBoundingClientRect().top + window.scrollY;
+        if (top <= y) current = section.id;
+      }
+
+      if (atPageEnd && navSections.length) {
+        current = navSections[navSections.length - 1].id;
+      }
+
+      setActive(current);
+    }
+
     let ticking = false;
     window.addEventListener('scroll', () => {
       if (ticking) return;
       ticking = true;
       window.requestAnimationFrame(() => {
         ticking = false;
-        const y = window.scrollY + headerOffset() + 24;
-        let current = navSections[0] ? navSections[0].id : '#home';
-        for (const section of navSections) {
-          const top = section.el.getBoundingClientRect().top + window.scrollY;
-          if (top <= y) current = section.id;
-        }
-        setActive(current);
+        updateActiveNav();
       });
     });
 
-    setActive(navSections[0] ? navSections[0].id : '#home');
+    window.addEventListener('resize', updateActiveNav);
+    updateActiveNav();
   }
 
   function bindContactForm() {
@@ -371,10 +484,6 @@
       el.insertAdjacentElement('afterend', div);
     }
 
-    function digits(s) {
-      return String(s || '').replace(/\D+/g, '');
-    }
-
     function validateField(id) {
       const el = getField(id);
       if (!el) return true;
@@ -383,10 +492,7 @@
       if (id === 'first_name' && val.length < 2) return setError(el, 'Please enter your first name.'), false;
       if (id === 'last_name' && val.length < 2) return setError(el, 'Please enter your last name.'), false;
       if (id === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) return setError(el, 'Please enter a valid email address.'), false;
-      if (id === 'phone' && val !== '') {
-        const d = digits(val);
-        if (d.length < 7 || d.length > 20) return setError(el, 'Please enter a valid phone number, or leave it blank.'), false;
-      }
+      if (id === 'phone' && (!val || !/^\d+$/.test(val))) return setError(el, 'Please enter a phone number using numbers only.'), false;
       if (id === 'message' && val.length < 10) return setError(el, 'Please enter a message with at least 10 characters.'), false;
 
       removeError(el);

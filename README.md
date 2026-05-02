@@ -17,7 +17,7 @@ Static one-page real estate website for GitHub Pages. The design uses a modern p
 - `docs/assets/js/site-content.js`: edit brand details, sections, copy, links, and form endpoint here
 - `docs/assets/js/main.js`: renders the page from the config
 - `docs/assets/css/styles.css`: design tokens, layout, components, and responsive styles
-- `docs/assets/img/`: visual assets
+- `docs/assets/images`: visual assets
 
 ## Customise content
 
