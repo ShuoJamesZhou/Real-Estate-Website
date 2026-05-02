@@ -1,57 +1,48 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1000" viewBox="0 0 2400 1000">
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1400" viewBox="0 0 1800 1400" role="img" aria-label="Modern riverside homes and city forms">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#0b0f1a"/>
-      <stop offset="1" stop-color="#0f1626"/>
+    <linearGradient id="sky" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#fff8ea"/>
+      <stop offset="0.48" stop-color="#dfe8dd"/>
+      <stop offset="1" stop-color="#8db4ad"/>
     </linearGradient>
-    <radialGradient id="glowA" cx="28%" cy="10%" r="60%">
-      <stop offset="0" stop-color="#5aba47" stop-opacity="0.28"/>
-      <stop offset="1" stop-color="#5aba47" stop-opacity="0"/>
-    </radialGradient>
-    <radialGradient id="glowB" cx="70%" cy="0%" r="65%">
-      <stop offset="0" stop-color="#ffffff" stop-opacity="0.14"/>
-      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="haze" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#000000" stop-opacity="0.65"/>
-      <stop offset="0.55" stop-color="#000000" stop-opacity="0.10"/>
-      <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+    <linearGradient id="deep" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#2f7d6d"/>
+      <stop offset="1" stop-color="#10201d"/>
     </linearGradient>
-    <filter id="noise">
-      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" />
-      <feColorMatrix type="matrix"
-        values="
-          1 0 0 0 0
-          0 1 0 0 0
-          0 0 1 0 0
-          0 0 0 0.08 0" />
+    <linearGradient id="sun" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#f6c78f"/>
+      <stop offset="1" stop-color="#d9824b"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="28" stdDeviation="26" flood-color="#10201d" flood-opacity="0.18"/>
     </filter>
   </defs>
 
-  <rect width="2400" height="1000" fill="url(#bg)"/>
-  <rect width="2400" height="1000" fill="url(#glowA)"/>
-  <rect width="2400" height="1000" fill="url(#glowB)"/>
+  <rect width="1800" height="1400" fill="url(#sky)"/>
+  <circle cx="1320" cy="250" r="170" fill="url(#sun)" opacity="0.92"/>
+  <path d="M0 900 C280 820 460 980 740 890 C1010 802 1200 680 1800 760 L1800 1400 L0 1400 Z" fill="#e7ddcb"/>
+  <path d="M0 1050 C300 940 530 1090 840 996 C1110 914 1320 840 1800 910 L1800 1400 L0 1400 Z" fill="#5f96a8" opacity="0.6"/>
+  <path d="M0 1120 C290 1030 560 1180 880 1088 C1170 1004 1390 930 1800 990 L1800 1400 L0 1400 Z" fill="#0f2924" opacity="0.88"/>
 
-  <!-- Abstract skyline blocks -->
-  <g opacity="0.55">
-    <rect x="1480" y="200" width="110" height="520" rx="14" fill="#1a2436"/>
-    <rect x="1620" y="260" width="150" height="470" rx="16" fill="#182033"/>
-    <rect x="1800" y="170" width="130" height="590" rx="16" fill="#1b2a40"/>
-    <rect x="1960" y="310" width="180" height="430" rx="18" fill="#141c2e"/>
-    <rect x="2160" y="240" width="120" height="510" rx="16" fill="#19243a"/>
+  <g filter="url(#softShadow)">
+    <rect x="330" y="450" width="270" height="440" rx="18" fill="#fffaf1"/>
+    <rect x="642" y="350" width="330" height="540" rx="20" fill="#ffffff"/>
+    <rect x="1020" y="510" width="300" height="380" rx="18" fill="#f7efe1"/>
+    <path d="M300 474 L465 340 L630 474 Z" fill="#0f2924"/>
+    <path d="M612 372 L806 220 L1000 372 Z" fill="#2f7d6d"/>
+    <path d="M990 530 L1170 390 L1350 530 Z" fill="#0f2924"/>
+    <rect x="388" y="560" width="70" height="86" rx="8" fill="#dfe8dd"/>
+    <rect x="482" y="560" width="70" height="86" rx="8" fill="#dfe8dd"/>
+    <rect x="720" y="485" width="82" height="96" rx="8" fill="#dfe8dd"/>
+    <rect x="838" y="485" width="82" height="96" rx="8" fill="#dfe8dd"/>
+    <rect x="1114" y="616" width="94" height="126" rx="10" fill="#dfe8dd"/>
+    <rect x="745" y="692" width="124" height="198" rx="12" fill="#d9824b"/>
   </g>
 
-  <!-- Light streaks -->
-  <g opacity="0.35">
-    <path d="M0,720 C420,640 760,640 1200,700 C1640,760 1950,740 2400,650 L2400,1000 L0,1000 Z" fill="#000000"/>
-    <path d="M0,730 C420,650 780,650 1210,715 C1650,780 1950,760 2400,670" fill="none" stroke="#5aba47" stroke-opacity="0.25" stroke-width="2"/>
-    <path d="M0,760 C520,700 820,700 1260,760 C1650,810 2020,800 2400,720" fill="none" stroke="#ffffff" stroke-opacity="0.12" stroke-width="2"/>
+  <g opacity="0.24" fill="none" stroke="#10201d" stroke-width="4">
+    <path d="M170 260 H510"/>
+    <path d="M150 310 H430"/>
+    <path d="M1230 1010 H1620"/>
+    <path d="M1280 1060 H1700"/>
   </g>
-
-  <!-- Left-side dark haze for readability -->
-  <rect width="2400" height="1000" fill="url(#haze)"/>
-
-  <!-- Subtle grain -->
-  <rect width="2400" height="1000" filter="url(#noise)" opacity="0.75"/>
 </svg>
-
