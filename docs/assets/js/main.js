@@ -1,328 +1,125 @@
 (() => {
-  const header = document.querySelector(".siteHeader");
+  const config = window.SITE_CONFIG || {};
+  const sections = Array.isArray(config.sections) ? config.sections : [];
+  const legalLinks = Array.isArray(config.legalLinks) ? config.legalLinks : [];
+  const brand = config.brand || {};
 
-  function headerOffset() {
-    return header ? header.getBoundingClientRect().height : 0;
+  const page = document.querySelector('[data-page-sections]');
+  const siteHeader = document.querySelector('[data-site-header]');
+  const footer = document.querySelector('[data-site-footer]');
+  const header = document.querySelector('.siteHeader');
+  const isHomePage = Boolean(page);
+
+  function escapeHtml(value) {
+    return String(value || '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
   }
 
-  function syncHeaderHeight() {
-    document.documentElement.style.setProperty("--header-height", `${headerOffset()}px`);
+  function button(action, fallbackStyle = 'secondary') {
+    if (!action || !action.href || !action.label) return '';
+    const style = action.style || fallbackStyle;
+    const classes = ['btn', style === 'primary' ? 'btnPrimary' : 'btnSecondary'];
+    return `<a class="${classes.join(' ')}" href="${escapeHtml(action.href)}">${escapeHtml(action.label)}<span aria-hidden="true">+</span></a>`;
   }
 
-  function scrollToId(id) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const y = el.getBoundingClientRect().top + window.scrollY - headerOffset() - 8;
-    window.scrollTo({ top: y, behavior: "smooth" });
+  function sectionHref(section) {
+    if (section.route) return section.route;
+    return isHomePage ? `#${section.id}` : `./index.html#${section.id}`;
   }
 
-  function stripHashFromUrl() {
-    if (!window.location.hash) return;
-    history.replaceState(null, "", window.location.pathname + window.location.search);
+  function homeHref() {
+    return isHomePage ? '#home' : './index.html#home';
   }
 
-  function bindNavigation() {
-    const links = Array.from(document.querySelectorAll('a[href^="#"]'));
-    links.forEach((a) => {
-      a.addEventListener("click", (event) => {
-        const href = a.getAttribute("href") || "";
-        if (!href.startsWith("#") || href === "#") return;
-        const id = href.slice(1);
-        if (!document.getElementById(id)) return;
-        event.preventDefault();
-        stripHashFromUrl();
-        scrollToId(id);
-      });
-    });
-  }
-
-  function bindActiveNav() {
-    const navLinks = Array.from(document.querySelectorAll(".topNavLink")).filter((a) =>
-      (a.getAttribute("href") || "").startsWith("#")
-    );
-    const navSections = navLinks
-      .map((a) => {
-        const href = a.getAttribute("href") || "";
-        const id = href.startsWith("#") ? href.slice(1) : "";
-        return { href, el: id ? document.getElementById(id) : null };
-      })
-      .filter((x) => x.el);
-
-    function setActive(href) {
-      navLinks.forEach((link) => link.classList.remove("topNavLinkActive"));
-      const active = navLinks.find((a) => (a.getAttribute("href") || "") === href);
-      if (active) active.classList.add("topNavLinkActive");
+  function imageUrl(src, fallback) {
+    try {
+      return new URL(src || fallback, document.baseURI).href;
+    } catch {
+      return fallback;
     }
-
-    function updateActiveNav() {
-      if (!navSections.length) return;
-      const y = window.scrollY + headerOffset() + 24;
-      const atPageEnd =
-        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
-      let current = navSections[0].href;
-
-      for (const section of navSections) {
-        const top = section.el.getBoundingClientRect().top + window.scrollY;
-        if (top <= y) current = section.href;
-      }
-
-      if (atPageEnd) current = navSections[navSections.length - 1].href;
-      setActive(current);
-    }
-
-    let ticking = false;
-    window.addEventListener("scroll", () => {
-      if (ticking) return;
-      ticking = true;
-      window.requestAnimationFrame(() => {
-        ticking = false;
-        updateActiveNav();
-      });
-    });
-
-    window.addEventListener("resize", updateActiveNav);
-    updateActiveNav();
   }
 
-  function bindReviewCarousels() {
-    document.querySelectorAll("[data-review-carousel]").forEach((carousel) => {
-      const track = carousel.querySelector("[data-review-track]");
-      const slides = Array.from(carousel.querySelectorAll("[data-review-slide]"));
-      const dots = Array.from(carousel.querySelectorAll("[data-review-dot]"));
-      if (!track || slides.length <= 1) return;
+  function sectionBackgroundStyle(section) {
+    if (!section.backgroundImage) return '';
 
-      let current = 0;
-      let timer = null;
-
-      function goTo(index) {
-        current = (index + slides.length) % slides.length;
-        const previous = (current - 1 + slides.length) % slides.length;
-        const following = (current + 1) % slides.length;
-
-        slides.forEach((slide, slideIndex) => {
-          slide.classList.toggle("reviewSlideActive", slideIndex === current);
-          slide.classList.toggle("reviewSlidePrevious", slideIndex === previous);
-          slide.classList.toggle("reviewSlideNext", slideIndex === following);
-          slide.setAttribute("aria-current", slideIndex === current ? "true" : "false");
-        });
-
-        dots.forEach((dot, dotIndex) => {
-          const active = dotIndex === current;
-          dot.classList.toggle("reviewDotActive", active);
-          dot.setAttribute("aria-current", active ? "true" : "false");
-        });
-      }
-
-      function stop() {
-        if (timer) window.clearInterval(timer);
-        timer = null;
-      }
-
-      function start() {
-        stop();
-        timer = window.setInterval(() => goTo(current + 1), 5200);
-      }
-
-      dots.forEach((dot) => {
-        dot.addEventListener("click", () => {
-          goTo(Number(dot.dataset.reviewDot || 0));
-          start();
-        });
-      });
-
-      slides.forEach((slide) => {
-        function activateSlide() {
-          const index = Number(slide.dataset.reviewIndex || 0);
-          if (index === current) return;
-          goTo(index);
-          start();
-        }
-
-        slide.addEventListener("click", activateSlide);
-        slide.addEventListener("keydown", (event) => {
-          if (event.key !== "Enter" && event.key !== " ") return;
-          event.preventDefault();
-          activateSlide();
-        });
-      });
-
-      carousel.addEventListener("mouseenter", stop);
-      carousel.addEventListener("mouseleave", start);
-      carousel.addEventListener("focusin", stop);
-      carousel.addEventListener("focusout", start);
-
-      goTo(0);
-      start();
-    });
+    return ` style="--section-image: url('${escapeHtml(imageUrl(section.backgroundImage, section.backgroundImage))}')"`;
   }
 
-  function bindFaqAnimation() {
-    document.querySelectorAll(".faqItem").forEach((item) => {
-      const summary = item.querySelector("summary");
-      const answer = item.querySelector(".faqAnswer");
-      if (!summary || !answer) return;
+  function logoMarkup() {
+    if (!brand.logo) return escapeHtml(brand.mark || '');
 
-      answer.style.height = item.open ? `${answer.scrollHeight}px` : "0px";
-
-      summary.addEventListener("click", (event) => {
-        event.preventDefault();
-
-        if (item.open) {
-          answer.style.height = `${answer.scrollHeight}px`;
-          window.requestAnimationFrame(() => {
-            window.requestAnimationFrame(() => {
-              answer.style.height = "0px";
-            });
-          });
-          answer.addEventListener("transitionend", function closeAfterTransition() {
-            item.open = false;
-            answer.removeEventListener("transitionend", closeAfterTransition);
-          });
-          return;
-        }
-
-        item.open = true;
-        answer.style.height = "0px";
-        window.requestAnimationFrame(() => {
-          answer.style.height = `${answer.scrollHeight}px`;
-        });
-      });
-
-      answer.addEventListener("transitionend", () => {
-        if (item.open) answer.style.height = "auto";
-      });
-    });
+    return `<img class="siteLogo" data-brand-logo src="${escapeHtml(brand.logo)}" alt="${escapeHtml(brand.name || 'Company logo')}" />`;
   }
 
-  function bindContactForm() {
-    const contact = document.querySelector("#contact");
-    const form = contact ? contact.querySelector("form") : null;
-    if (!form) return;
+  function detailIcon(name) {
+    const icons = {
+      phone: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.7 16.9 14a1.7 1.7 0 0 0-2 .5l-.9 1.1a13.2 13.2 0 0 1-5.6-5.6l1.1-.9a1.7 1.7 0 0 0 .5-2L8.3 3.5A1.7 1.7 0 0 0 6.4 2.6L3.3 3.3A1.7 1.7 0 0 0 2 5c0 9.4 7.6 17 17 17 .8 0 1.5-.5 1.7-1.3l.7-3.1a1.7 1.7 0 0 0-.9-1.9Z"/></svg>',
+      address: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a8 8 0 0 0-8 8c0 5.4 6.7 11.4 7.4 12 .4.3.9.3 1.2 0 .7-.6 7.4-6.6 7.4-12a8 8 0 0 0-8-8Zm0 11.2A3.2 3.2 0 1 1 12 6.8a3.2 3.2 0 0 1 0 6.4Z"/></svg>',
+      hours: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.1 12.6a1 1 0 0 1-1.4.3l-3.2-2.1A1 1 0 0 1 11 12V7a1 1 0 1 1 2 0v4.5l2.8 1.8a1 1 0 0 1 .3 1.3Z"/></svg>',
+    };
 
-    const fieldIds = ["first_name", "last_name", "email", "phone", "message"];
-
-    function getField(id) {
-      return form.querySelector(`#${CSS.escape(id)}`);
-    }
-
-    function removeError(el) {
-      if (!el) return;
-      el.classList.remove("fieldError");
-      const next = el.nextElementSibling;
-      if (next && next.classList.contains("errorText")) next.remove();
-    }
-
-    function setError(el, msg) {
-      if (!el) return;
-      el.classList.add("fieldError");
-      const next = el.nextElementSibling;
-      if (next && next.classList.contains("errorText")) {
-        next.textContent = msg;
-        return;
-      }
-      const div = document.createElement("div");
-      div.className = "errorText";
-      div.textContent = msg;
-      el.insertAdjacentElement("afterend", div);
-    }
-
-    function validateField(id) {
-      const el = getField(id);
-      if (!el) return true;
-      const val = String(el.value || "").trim();
-
-      if (id === "first_name" && val.length < 2)
-        return setError(el, "Please enter your first name."), false;
-      if (id === "last_name" && val.length < 2)
-        return setError(el, "Please enter your last name."), false;
-      if (id === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val))
-        return setError(el, "Please enter a valid email address."), false;
-      if (id === "phone" && (!val || !/^\d+$/.test(val)))
-        return setError(el, "Please enter a phone number using numbers only."), false;
-      if (id === "message" && val.length < 10)
-        return setError(el, "Please enter a message with at least 10 characters."), false;
-
-      removeError(el);
-      return true;
-    }
-
-    function showNotice(type, message) {
-      const existing = contact.querySelector(".notice");
-      if (existing) existing.remove();
-      const notice = document.createElement("div");
-      notice.className = `notice notice${type}`;
-      notice.setAttribute("role", type === "Success" ? "status" : "alert");
-      notice.textContent = message;
-      contact.querySelector(".contactGrid")?.insertAdjacentElement("beforebegin", notice);
-    }
-
-    fieldIds.forEach((id) => {
-      const el = getField(id);
-      if (!el) return;
-      el.addEventListener("input", () => removeError(el));
-      el.addEventListener("blur", () => validateField(id));
-    });
-
-    form.addEventListener("submit", (event) => {
-      let ok = true;
-      fieldIds.forEach((id) => {
-        if (!validateField(id)) ok = false;
-      });
-      if (!ok) {
-        event.preventDefault();
-        return;
-      }
-
-      const endpoint = form.getAttribute("data-endpoint") || "";
-      if (!endpoint) return;
-
-      event.preventDefault();
-      const btn = form.querySelector('button[type="submit"]');
-      if (btn) btn.disabled = true;
-
-      fetch(endpoint, {
-        method: "POST",
-        headers: { Accept: "application/json" },
-        body: new FormData(form)
-      })
-        .then((res) => {
-          if (!res.ok) throw new Error("submit_failed");
-          showNotice("Success", "Thanks. Your enquiry has been sent.");
-          form.reset();
-          fieldIds.forEach((id) => removeError(getField(id)));
-        })
-        .catch(() => {
-          showNotice("Error", "We could not send your message right now. Please try again later.");
-        })
-        .finally(() => {
-          if (btn) btn.disabled = false;
-        });
-    });
+    return `<span class="detailIcon">${icons[name] || ''}</span>`;
   }
 
-  function syncYear() {
-    document.querySelectorAll("[data-year]").forEach((el) => {
-      el.textContent = String(new Date().getFullYear());
-    });
+  function detailRow(type, label, href = '') {
+    if (!label) return '';
+
+    const content = `${detailIcon(type)}<span>${escapeHtml(label)}</span>`;
+    return href
+      ? `<a class="contactDetail" href="${escapeHtml(href)}">${content}</a>`
+      : `<span class="contactDetail">${content}</span>`;
   }
 
-  syncYear();
-  syncHeaderHeight();
-  window.addEventListener("resize", syncHeaderHeight);
-  bindNavigation();
-  bindActiveNav();
-  bindReviewCarousels();
-  bindFaqAnimation();
-  bindContactForm();
-
-  if (window.location.hash) {
-    const id = window.location.hash.slice(1);
-    setTimeout(() => {
-      scrollToId(id);
-      stripHashFromUrl();
-    }, 50);
+  function sectionIntro(section) {
+    if (!section.title && !section.text) return '';
+    return `
+      <div class="sectionHeader">
+        ${section.title ? `<h2>${escapeHtml(section.title)}</h2>` : ''}
+        ${section.text ? `<p>${escapeHtml(section.text)}</p>` : ''}
+      </div>
+    `;
   }
-})();
+
+  function sectionTitle(section) {
+    if (section.id === 'home' || !section.nav) return '';
+
+    return `<p class="sectionTitle">${escapeHtml(section.nav)}</p>`;
+  }
+
+  function renderHero(section) {
+    const actions = Array.isArray(section.actions) ? section.actions : [];
+    const backgroundStyle = sectionBackgroundStyle(section);
+    const homeIntro = section.introTitle || section.introText
+      ? `
+            <div class="heroIntro">
+              ${section.introTitle ? `<h1>${escapeHtml(section.introTitle)}</h1>` : ''}
+              ${section.introText ? `<p>${escapeHtml(section.introText)}</p>` : ''}
+            </div>
+          `
+      : '';
+
+    return `
+      <section id="${escapeHtml(section.id)}" class="homeHero band imageBand"${backgroundStyle}>
+        <div class="container">
+          ${homeIntro}
+        </div>
+        <div class="container heroGrid">
+          <div class="heroCopy">
+            <h2>${escapeHtml(section.title)}</h2>
+            <p>${escapeHtml(section.text)}</p>
+            <div class="ctaRow">
+              ${actions.map((item, index) => button(item, index === 0 ? 'primary' : 'secondary')).join('')}
+            </div>
+          </div>
+          <div class="heroMedia" aria-hidden="true"></div>
+        </div>
+      </section>
+    `;
+  }
 
   function renderCta(section) {
     return `
@@ -909,3 +706,21 @@
     });
   }
 
+  renderChrome();
+  if (page) page.innerHTML = sections.map(renderSection).join('');
+  syncHeaderHeight();
+  window.addEventListener('resize', syncHeaderHeight);
+  bindNavigation();
+  bindActiveNav();
+  bindReviewCarousels();
+  bindFaqAnimation();
+  bindContactForm();
+
+  if (window.location.hash) {
+    const id = window.location.hash.slice(1);
+    setTimeout(() => {
+      scrollToId(id);
+      stripHashFromUrl();
+    }, 50);
+  }
+})();

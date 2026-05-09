@@ -11,7 +11,7 @@ window.SITE_CONFIG = {
     hours: 'Mon-Fri 9:00am-5:00pm',
   },
 
-  formEndpoint: '/api/contact',
+  formEndpoint: 'https://formspree.io/f/mrejyovb',
 
   legalLinks: [
     { label: 'Confidential Agreement', href: 'https://forms.gle/PVaDnvDpSq6rp8UX7' },
