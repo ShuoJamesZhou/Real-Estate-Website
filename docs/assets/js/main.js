@@ -1,12 +1,14 @@
 (() => {
   const config = window.SITE_CONFIG || {};
   const sections = Array.isArray(config.sections) ? config.sections : [];
+  const legalLinks = Array.isArray(config.legalLinks) ? config.legalLinks : [];
   const brand = config.brand || {};
 
   const page = document.querySelector('[data-page-sections]');
-  const nav = document.querySelector('[data-nav]');
+  const siteHeader = document.querySelector('[data-site-header]');
   const footer = document.querySelector('[data-site-footer]');
   const header = document.querySelector('.siteHeader');
+  const isHomePage = Boolean(page);
 
   function escapeHtml(value) {
     return String(value || '')
@@ -25,7 +27,12 @@
   }
 
   function sectionHref(section) {
-    return section.route || `#${section.id}`;
+    if (section.route) return section.route;
+    return isHomePage ? `#${section.id}` : `./index.html#${section.id}`;
+  }
+
+  function homeHref() {
+    return isHomePage ? '#home' : './index.html#home';
   }
 
   function imageUrl(src, fallback) {
@@ -34,6 +41,12 @@
     } catch {
       return fallback;
     }
+  }
+
+  function sectionBackgroundStyle(section) {
+    if (!section.backgroundImage) return '';
+
+    return ` style="--section-image: url('${escapeHtml(imageUrl(section.backgroundImage, section.backgroundImage))}')"`;
   }
 
   function logoMarkup() {
@@ -78,8 +91,8 @@
   }
 
   function renderHero(section) {
-    const stats = Array.isArray(section.stats) ? section.stats : [];
     const actions = Array.isArray(section.actions) ? section.actions : [];
+    const backgroundStyle = sectionBackgroundStyle(section);
     const homeIntro = section.introTitle || section.introText
       ? `
             <div class="heroIntro">
@@ -90,7 +103,7 @@
       : '';
 
     return `
-      <section id="${escapeHtml(section.id)}" class="homeHero band">
+      <section id="${escapeHtml(section.id)}" class="homeHero band imageBand"${backgroundStyle}>
         <div class="container">
           ${homeIntro}
         </div>
@@ -102,16 +115,7 @@
               ${actions.map((item, index) => button(item, index === 0 ? 'primary' : 'secondary')).join('')}
             </div>
           </div>
-          <div class="heroMedia" style="--hero-image: url('${escapeHtml(imageUrl(section.image, './assets/images/hero-placeholder.svg'))}')" role="img" aria-label="${escapeHtml(section.title)}">
-            <div class="heroStats">
-              ${stats.map((stat) => `
-                <div>
-                  <strong>${escapeHtml(stat.value)}</strong>
-                  <span>${escapeHtml(stat.label)}</span>
-                </div>
-              `).join('')}
-            </div>
-          </div>
+          <div class="heroMedia" aria-hidden="true"></div>
         </div>
       </section>
     `;
@@ -136,9 +140,11 @@
 
   function renderStatement(section) {
     const cards = Array.isArray(section.cards) ? section.cards : [];
+    const reviews = Array.isArray(section.reviews) ? section.reviews : [];
+    const backgroundStyle = sectionBackgroundStyle(section);
 
     return `
-      <section id="${escapeHtml(section.id)}" class="section band bandStatement">
+      <section id="${escapeHtml(section.id)}" class="section band bandStatement imageBand"${backgroundStyle}>
         <div class="container statementCopy">
           ${sectionTitle(section)}
           ${cards.length ? `
@@ -154,6 +160,25 @@
             ${section.title ? `<h2>${escapeHtml(section.title)}</h2>` : ''}
             ${section.text ? `<p>${escapeHtml(section.text)}</p>` : ''}
           `}
+          ${reviews.length ? `
+            <div class="reviewCarousel" data-review-carousel>
+              <div class="reviewViewport">
+                <div class="reviewTrack" data-review-track>
+                  ${reviews.map((review, index) => `
+                    <figure class="reviewSlide${index === 0 ? ' reviewSlideActive' : ''}" data-review-slide data-review-index="${index}" tabindex="0" role="button" aria-label="Show review ${index + 1}">
+                      <blockquote>${escapeHtml(review.text)}</blockquote>
+                      ${review.name ? `<figcaption>${escapeHtml(review.name)}</figcaption>` : ''}
+                    </figure>
+                  `).join('')}
+                </div>
+              </div>
+              <div class="reviewDots" aria-label="Review navigation">
+                ${reviews.map((_, index) => `
+                  <button class="reviewDot${index === 0 ? ' reviewDotActive' : ''}" type="button" data-review-dot="${index}" aria-label="Show review ${index + 1}"></button>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
         </div>
       </section>
     `;
@@ -225,8 +250,9 @@
 
   function renderFaq(section) {
     const items = Array.isArray(section.items) ? section.items : [];
+    const backgroundStyle = sectionBackgroundStyle(section);
     return `
-      <section id="${escapeHtml(section.id)}" class="section band bandSoft">
+      <section id="${escapeHtml(section.id)}" class="section band bandSoft bandFaq imageBand"${backgroundStyle}>
         <div class="container">
           ${sectionTitle(section)}
           ${sectionIntro(section)}
@@ -235,9 +261,13 @@
               <details class="faqItem">
                 <summary>
                   <span>${escapeHtml(item.question)}</span>
-                  <span class="faqChevron" aria-hidden="true">+</span>
+                  <span class="faqChevron" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false">
+                      <path d="M8 5l8 7-8 7" />
+                    </svg>
+                  </span>
                 </summary>
-                <div class="faqAnswer">${escapeHtml(item.answer)}</div>
+                <div class="faqAnswer"><p>${escapeHtml(item.answer)}</p></div>
               </details>
             `).join('')}
           </div>
@@ -247,8 +277,9 @@
   }
 
   function renderContact(section) {
+    const backgroundStyle = sectionBackgroundStyle(section);
     return `
-      <section id="${escapeHtml(section.id)}" class="section band bandContact">
+      <section id="${escapeHtml(section.id)}" class="section band bandContact imageBand"${backgroundStyle}>
         <div class="container">
           ${sectionTitle(section)}
           <div class="contactGrid">
@@ -298,21 +329,6 @@
     `;
   }
 
-  function renderRouteCta(section) {
-    return `
-      <section id="${escapeHtml(section.id)}" class="section band bandNda">
-        <div class="container routeCta">
-          ${sectionTitle(section)}
-          <div>
-            <h2>${escapeHtml(section.title)}</h2>
-            ${section.text ? `<p>${escapeHtml(section.text)}</p>` : ''}
-          </div>
-          ${button(section.action || { label: 'Open form', href: section.route || '#' }, 'primary')}
-        </div>
-      </section>
-    `;
-  }
-
   function renderSection(section) {
     const renderers = {
       hero: renderHero,
@@ -323,13 +339,26 @@
       steps: renderSteps,
       faq: renderFaq,
       contact: renderContact,
-      routeCta: renderRouteCta,
     };
     const render = renderers[section.type] || renderCards;
     return render(section);
   }
 
   function renderChrome() {
+    if (siteHeader) {
+      siteHeader.innerHTML = `
+        <div class="container headerInner">
+          <a class="brand" href="${escapeHtml(homeHref())}" aria-label="Home">
+            <span class="brandMark${brand.logo ? ' siteLogoMark' : ''}" data-brand-mark aria-hidden="true">${logoMarkup()}</span>
+          </a>
+
+          <nav class="topNavTabs" data-nav aria-label="Primary navigation"></nav>
+        </div>
+      `;
+    }
+
+    const nav = document.querySelector('[data-nav]');
+
     document.querySelectorAll('[data-brand-mark]').forEach((el) => {
       const image = el.querySelector('[data-brand-logo]');
 
@@ -358,19 +387,20 @@
       footer.innerHTML = `
         <div class="footerTop">
           <div class="container footerMain">
-            <a class="footerBrand" href="#home" aria-label="Home">
+            <a class="footerBrand" href="${escapeHtml(homeHref())}" aria-label="Home">
               <span class="brandMark${brand.logo ? ' siteLogoMark' : ''}" aria-hidden="true">${logoMarkup()}</span>
             </a>
             <div class="footerLegalLinks" aria-label="Legal links">
-              <a href="./confidential-agreement.html">Confidential Agreement</a>
-              <a href="./privacy-policy.html">Privacy Policy</a>
-              <a href="./disclaimer.html">Disclaimer</a>
+              ${legalLinks
+          .filter((link) => link && link.href && link.label)
+          .map((link) => `<a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a>`)
+          .join('')}
             </div>
           </div>
         </div>
         <div class="footerBottom">
           <div class="container footerBottomInner">
-            <span>&copy; ${new Date().getFullYear()} ${escapeHtml(brand.name || 'Company Name')}</span>
+            <span>&copy; ${new Date().getFullYear()} ${escapeHtml(brand.name || 'Company Name')} PTY LTD</span>
             <a href="#top">Back to top</a>
           </div>
         </div>
@@ -380,6 +410,10 @@
 
   function headerOffset() {
     return header ? header.getBoundingClientRect().height : 0;
+  }
+
+  function syncHeaderHeight() {
+    document.documentElement.style.setProperty('--header-height', `${headerOffset()}px`);
   }
 
   function scrollToId(id) {
@@ -452,6 +486,116 @@
     updateActiveNav();
   }
 
+  function bindReviewCarousels() {
+    document.querySelectorAll('[data-review-carousel]').forEach((carousel) => {
+      const track = carousel.querySelector('[data-review-track]');
+      const slides = Array.from(carousel.querySelectorAll('[data-review-slide]'));
+      const dots = Array.from(carousel.querySelectorAll('[data-review-dot]'));
+      if (!track || slides.length <= 1) return;
+
+      let current = 0;
+      let timer = null;
+
+      function goTo(index) {
+        current = (index + slides.length) % slides.length;
+        const previous = (current - 1 + slides.length) % slides.length;
+        const following = (current + 1) % slides.length;
+
+        slides.forEach((slide, slideIndex) => {
+          slide.classList.toggle('reviewSlideActive', slideIndex === current);
+          slide.classList.toggle('reviewSlidePrevious', slideIndex === previous);
+          slide.classList.toggle('reviewSlideNext', slideIndex === following);
+          slide.setAttribute('aria-current', slideIndex === current ? 'true' : 'false');
+        });
+
+        dots.forEach((dot, dotIndex) => {
+          const active = dotIndex === current;
+          dot.classList.toggle('reviewDotActive', active);
+          dot.setAttribute('aria-current', active ? 'true' : 'false');
+        });
+      }
+
+      function stop() {
+        if (timer) window.clearInterval(timer);
+        timer = null;
+      }
+
+      function start() {
+        stop();
+        timer = window.setInterval(() => goTo(current + 1), 5200);
+      }
+
+      dots.forEach((dot) => {
+        dot.addEventListener('click', () => {
+          goTo(Number(dot.dataset.reviewDot || 0));
+          start();
+        });
+      });
+
+      slides.forEach((slide) => {
+        function activateSlide() {
+          const index = Number(slide.dataset.reviewIndex || 0);
+          if (index === current) return;
+          goTo(index);
+          start();
+        }
+
+        slide.addEventListener('click', activateSlide);
+        slide.addEventListener('keydown', (event) => {
+          if (event.key !== 'Enter' && event.key !== ' ') return;
+          event.preventDefault();
+          activateSlide();
+        });
+      });
+
+      carousel.addEventListener('mouseenter', stop);
+      carousel.addEventListener('mouseleave', start);
+      carousel.addEventListener('focusin', stop);
+      carousel.addEventListener('focusout', start);
+
+      goTo(0);
+      start();
+    });
+  }
+
+  function bindFaqAnimation() {
+    document.querySelectorAll('.faqItem').forEach((item) => {
+      const summary = item.querySelector('summary');
+      const answer = item.querySelector('.faqAnswer');
+      if (!summary || !answer) return;
+
+      answer.style.height = item.open ? `${answer.scrollHeight}px` : '0px';
+
+      summary.addEventListener('click', (event) => {
+        event.preventDefault();
+
+        if (item.open) {
+          answer.style.height = `${answer.scrollHeight}px`;
+          window.requestAnimationFrame(() => {
+            window.requestAnimationFrame(() => {
+              answer.style.height = '0px';
+            });
+          });
+          answer.addEventListener('transitionend', function closeAfterTransition() {
+            item.open = false;
+            answer.removeEventListener('transitionend', closeAfterTransition);
+          });
+          return;
+        }
+
+        item.open = true;
+        answer.style.height = '0px';
+        window.requestAnimationFrame(() => {
+          answer.style.height = `${answer.scrollHeight}px`;
+        });
+      });
+
+      answer.addEventListener('transitionend', () => {
+        if (item.open) answer.style.height = 'auto';
+      });
+    });
+  }
+
   function bindContactForm() {
     const contact = document.querySelector('#contact');
     const form = contact ? contact.querySelector('form') : null;
@@ -511,7 +655,7 @@
       notice.className = `notice notice${type}`;
       notice.setAttribute('role', type === 'Success' ? 'status' : 'alert');
       notice.textContent = message;
-      contact.querySelector('.container')?.insertBefore(notice, contact.querySelector('.contactCard'));
+      contact.querySelector('.contactGrid')?.insertAdjacentElement('beforebegin', notice);
     }
 
     fieldIds.forEach((id) => {
@@ -564,8 +708,12 @@
 
   renderChrome();
   if (page) page.innerHTML = sections.map(renderSection).join('');
+  syncHeaderHeight();
+  window.addEventListener('resize', syncHeaderHeight);
   bindNavigation();
   bindActiveNav();
+  bindReviewCarousels();
+  bindFaqAnimation();
   bindContactForm();
 
   if (window.location.hash) {

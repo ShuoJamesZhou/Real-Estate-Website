@@ -11,8 +11,13 @@ window.SITE_CONFIG = {
     hours: 'Mon-Fri 9:00am-5:00pm',
   },
 
-  formEndpoint: 'https://formspree.io/f/xqewnoda',
-  ndaFormEndpoint: '',
+  formEndpoint: 'https://formspree.io/f/mrejyovb',
+
+  legalLinks: [
+    { label: 'Confidential Agreement', href: 'https://forms.gle/PVaDnvDpSq6rp8UX7' },
+    { label: 'Privacy Policy', href: './privacy-policy.html' },
+    { label: 'Disclaimer', href: './disclaimer.html' },
+  ],
 
   sections: [
     {
@@ -20,32 +25,42 @@ window.SITE_CONFIG = {
       nav: 'Home',
       type: 'hero',
       introTitle: 'Business sales should feel informed, structured, and seamless.',
-      introText: 'We specialise in brokering businesses by providing accurate valuations, targeted buyer matching, confidential marketing, and end-to-end support through negotiation and settlement—ensuring smooth, well-managed transactions for both buyers and sellers.',
+      introText: 'We specialise in brokering businesses through targeted buyer matching, confidential marketing, and end-to-end support throughout negotiation and settlement—helping position businesses effectively in the market while ensuring smooth, well-managed transactions for both buyers and sellers.',
       title: 'A sharper way to buy and sell businesses.',
       text: 'Clear guidance, strategic positioning, and a sales process focused on the key drivers that maximise value and secure the right outcome for you.',
-      image: './assets/images/hero-placeholder.svg',
+      backgroundImage: './assets/images/home-background.jpg',
       actions: [
         { label: 'Contact us', href: '#contact', style: 'primary' },
         { label: 'About us', href: '#about', style: 'secondary' },
-      ],
-      stats: [
-        { value: 'Local', label: 'market insight' },
-        { value: 'Clear', label: 'campaign strategy' },
-        { value: 'Modern', label: 'buyer experience' },
       ],
     },
     {
       id: 'about',
       nav: 'About Us',
       type: 'statement',
+      backgroundImage: './assets/images/aboutUs-background.png',
       cards: [
         {
           title: 'About App Real Estate',
-          text: 'Established in 2015, App Real Estate is a dedicated business brokerage specialising in the sale and acquisition of businesses in retail, hospitality, wholesale, and service sectors. With over a decade of operation, we have built a strong understanding of market dynamics, valuation strategies, and buyer behaviour, allowing us to position businesses effectively and manage transactions with clarity and confidence.',
+          text: 'Established in 2016, App Real Estate is a dedicated business brokerage specialising in the sale and acquisition of businesses in retail, hospitality, wholesale, and service sectors. With over a decade of operation, we have built a strong understanding of market dynamics, valuation strategies, and buyer behaviour, allowing us to position businesses effectively and manage transactions with clarity and confidence.',
         },
         {
           title: 'Our Team & Why Us',
           text: 'Our team brings more than 25 years of industry experience, offering practical insight and hands-on guidance at every stage. We focus on clear communication, structured execution, and tailored strategies that align with your goals. Whether buying or selling, we provide a professional approach that simplifies the process, protects your interests, and delivers a well-aligned outcome.',
+        },
+      ],
+      reviews: [
+        {
+          name: 'Seller, hospitality business',
+          text: 'The process was clear from the first meeting. We understood what mattered, what needed preparing, and how the sale would be managed.',
+        },
+        {
+          name: 'Buyer, retail business',
+          text: 'APP Real Estate handled the sale with discretion and kept communication steady throughout negotiation and settlement.',
+        },
+        {
+          name: 'Business owner, services sector',
+          text: 'They gave practical advice, positioned the business properly, and helped us move forward with confidence.',
         },
       ],
     },
@@ -53,6 +68,7 @@ window.SITE_CONFIG = {
       id: 'faq',
       nav: 'FAQ',
       type: 'faq',
+      backgroundImage: './assets/images/faq-background.jpg',
       title: '',
       text: '',
       items: [
@@ -82,6 +98,7 @@ window.SITE_CONFIG = {
       id: 'contact',
       nav: 'Contact Us',
       type: 'contact',
+      backgroundImage: './assets/images/contactUs-background.png',
       title: 'Tell us about your plans.',
       text: 'Whether you’re buying or selling, share a few details and we’ll come back with clear, practical next steps.',
     },
