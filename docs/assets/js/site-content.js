@@ -51,16 +51,118 @@ window.SITE_CONFIG = {
       ],
       reviews: [
         {
-          name: 'Seller, hospitality business',
-          text: 'The process was clear from the first meeting. We understood what mattered, what needed preparing, and how the sale would be managed.',
+          name: 'Cindy Shen',
+          text: [
+            '我们是去年年中找彩票生意时遇到的Fong，她非常专业热情，',
+            '不仅在我们通过彩票公司的面试环节提供了很专业的指导和建议，',
+            '还帮我们和卖家建立了良好的沟通关系，',
+            '使我们顺利买到了一个优质的生意，',
+            '我会向所有有买卖生意需求的朋友推荐Fong的。',
+          ].join(''),
         },
         {
-          name: 'Buyer, retail business',
-          text: 'APP Real Estate handled the sale with discretion and kept communication steady throughout negotiation and settlement.',
+          name: '黄思峰',
+          text: [
+            '芳，您好!',
+            [
+              '感谢您一直以来对我们的支持和关心。',
+              '2年前您顶着烈日带着我和我太太在墨尔本各处寻找生意的场景还历历在目。',
+              '在您专业的建议下我们终于找到了一个非常好的生意，给我带来良好的收益。',
+              '我的朋友都羡慕得不得了，都纷纷让我把您介绍给他们，',
+              '从他们那得知您都给他们提供了专业热情的服务，我再此也代表他们表示感谢。',
+              '随着对墨尔本经验环境的进一步了解，我们也想进一步增加在这边的投资，',
+              '前一段时间您给我们推荐的几个项目我们也都正在考虑之中。',
+              '另外，我和几个朋友想在汽车零部件销售行业进行投资入，',
+              '也麻烦您帮我们收集一下这方面的资料与信息。',
+            ].join(''),
+          ].join('\n\n'),
         },
         {
-          name: 'Business owner, services sector',
-          text: 'They gave practical advice, positioned the business properly, and helped us move forward with confidence.',
+          name: 'Chong Tang',
+          text: [
+            'Fong has been prompt and detailed in all aspects of our business purchase.',
+            'She was very helpful advising what was most suitable and guiding us through the whole process.',
+            'She was an absolute pleasure to deal with.',
+            'We will highly recommend her services.',
+          ].join(' '),
+        },
+        {
+          name: 'Richard Yii',
+          text: [
+            [
+              'I recently purchased a business through Fong from APP Real Estate,',
+              'a highly professional agent from start to finish.',
+              'I would like to thank Fong for her ongoing hard work and her dedicated approach',
+              'to her clients’ needs, always maintaining the highest level of service.',
+              'I highly recommend Fong for her attitude and passion for her work,',
+              'and would encourage anyone looking to buy or sell a business to engage her.',
+            ].join(' '),
+            'Thank you again to Fong for her help and for a wonderful result.',
+          ].join('\n\n'),
+        },
+        {
+          name: 'Brent Manning',
+          text: [
+            [
+              'It is my pleasure to provide a testimonial for Fong, a Hospitality Business Agent',
+              'who successfully sold two businesses, Bensons Café & Food Store, Belgrave',
+              'and Bensons on Martin, Brighton on our behalf.',
+            ].join(' '),
+            [
+              'I had listed these businesses with many Agents, all large with promises to sell these businesses,',
+              'all talk and no results. These Agents did not communicate with me, made false promises',
+              'and excuses why the businesses did not sell and looked for the easy option to reduce the sell price.',
+            ].join(' '),
+            [
+              'I then met Fong who was a breath of fresh air.',
+              'Fong set a realistic valuation for each business and then worked extremely hard to sell using her contacts,',
+              'following up on every lead, and most importantly, communicating with me.',
+            ].join(' '),
+            'Fong was extremely successful in identifying buyers, matching the right buyer with each property and then worked hard to finalize the sale.',
+            'I would have no hesitation recommending Fong to any potential Vendor and feel confident she will get the results you are looking for, and work extremely hard on your behalf.',
+          ].join('\n\n'),
+        },
+        {
+          name: 'Le Thanh Tuan Tran',
+          text: [
+            'Dear Ms. Fong,',
+            [
+              'I am writing to express my sincere appreciation for the outstanding services provided by you',
+              'and your team at APP Real Estate. Your expertise and dedication played a crucial role',
+              'in the success of our business purchasing journey.',
+            ].join(' '),
+            [
+              'From our initial consultation to the finalization of the deal, your professionalism and attention to detail were evident.',
+              'Your guidance and strategic insights throughout the process were instrumental in navigating the complexities of the market.',
+              'Your commitment to achieving the best possible outcome for your clients is truly commendable.',
+            ].join(' '),
+            [
+              'What stood out most during our collaboration was your transparent communication and timely updates.',
+              'Your ability to address our concerns and provide clear explanations helped alleviate any apprehensions we had,',
+              'making the entire experience smooth and stress-free.',
+            ].join(' '),
+            [
+              'I would not hesitate to recommend your services to anyone in need of a skilled and trustworthy business broker.',
+              'Your commitment to client satisfaction and your extensive knowledge of the industry make you a valuable asset',
+              'to those seeking assistance in buying a business.',
+            ].join(' '),
+            'Once again, thank you for your exceptional service. I look forward to the possibility of working together again in the future.',
+          ].join('\n\n'),
+        },
+        {
+          name: 'Clare Voitin',
+          text: [
+            [
+              'Fong was very proactive in meeting with us and addressing our needs regarding the sale of our business.',
+              'She found our buyer within the week. Fong was confident and successful in achieving the sale price we wanted',
+              'and managed the entire sales process with transparency and professionalism for both parties.',
+            ].join(' '),
+            [
+              'Selling a business can be stressful and intimidating, but Fong ensured the process was uncomplicated.',
+              'At all times, she was patient, helpful, and readily available.',
+            ].join(' '),
+            'I would certainly use Fong again and have already recommended her to a number of my colleagues.',
+          ].join('\n\n'),
         },
       ],
     },

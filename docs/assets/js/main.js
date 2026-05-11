@@ -3,6 +3,7 @@
   const sections = Array.isArray(config.sections) ? config.sections : [];
   const legalLinks = Array.isArray(config.legalLinks) ? config.legalLinks : [];
   const brand = config.brand || {};
+  const REVIEW_AUTO_SCROLL = false;
 
   const page = document.querySelector('[data-page-sections]');
   const siteHeader = document.querySelector('[data-site-header]');
@@ -17,6 +18,60 @@
       .replaceAll('>', '&gt;')
       .replaceAll('"', '&quot;')
       .replaceAll("'", '&#039;');
+  }
+
+  function reviewText(value) {
+    let text = String(value || '').trim();
+    const quoteTokens = [
+      '&quot;',
+      '"',
+      "'",
+      '\u201c',
+      '\u201d',
+      '\u2018',
+      '\u2019',
+      '\u00ab',
+      '\u00bb',
+      '\u201e',
+      '\u201f',
+      '\u300c',
+      '\u300d',
+      '\u300e',
+      '\u300f',
+      '\u00e2\u20ac\u0153',
+      '\u00e2\u20ac\u009d',
+    ];
+
+    let changed = true;
+    while (changed) {
+      changed = false;
+      text = text.trim();
+
+      quoteTokens.forEach((token) => {
+        if (text.startsWith(token)) {
+          text = text.slice(token.length);
+          changed = true;
+        }
+
+        if (text.endsWith(token)) {
+          text = text.slice(0, -token.length);
+          changed = true;
+        }
+      });
+    }
+
+    return text.trim();
+  }
+
+  function reviewTextStyle(value) {
+    const length = String(value || '').length;
+    const scale = length > 1200 ? 0.44 : length > 900 ? 0.5 : length > 650 ? 0.58 : length > 420 ? 0.66 : length > 290 ? 0.72 : length > 230 ? 0.8 : length > 170 ? 0.88 : 1;
+    const min = Math.max(11, Math.round(18 * scale * 10) / 10);
+    const fluid = Math.round(2 * scale * 100) / 100;
+    const max = Math.round(26 * scale * 10) / 10;
+    const mobile = Math.max(11, Math.round(18 * scale * 10) / 10);
+
+    return ` style="--review-text-min: ${min}px; --review-text-fluid: ${fluid}vw; --review-text-max: ${max}px; --review-text-mobile: ${mobile}px"`;
   }
 
   function button(action, fallbackStyle = 'secondary') {
@@ -164,12 +219,16 @@
             <div class="reviewCarousel" data-review-carousel>
               <div class="reviewViewport">
                 <div class="reviewTrack" data-review-track>
-                  ${reviews.map((review, index) => `
-                    <figure class="reviewSlide${index === 0 ? ' reviewSlideActive' : ''}" data-review-slide data-review-index="${index}" tabindex="0" role="button" aria-label="Show review ${index + 1}">
-                      <blockquote>${escapeHtml(review.text)}</blockquote>
+                  ${reviews.map((review, index) => {
+      const text = reviewText(review.text);
+
+      return `
+                    <figure class="reviewSlide${index === 0 ? ' reviewSlideActive' : ''}" data-review-slide data-review-index="${index}" tabindex="0" role="button" aria-label="Show review ${index + 1}"${reviewTextStyle(text)}>
+                      <blockquote>${escapeHtml(text)}</blockquote>
                       ${review.name ? `<figcaption>${escapeHtml(review.name)}</figcaption>` : ''}
                     </figure>
-                  `).join('')}
+                  `;
+    }).join('')}
                 </div>
               </div>
               <div class="reviewDots" aria-label="Review navigation">
@@ -488,6 +547,7 @@
 
   function bindReviewCarousels() {
     document.querySelectorAll('[data-review-carousel]').forEach((carousel) => {
+      const viewport = carousel.querySelector('.reviewViewport');
       const track = carousel.querySelector('[data-review-track]');
       const slides = Array.from(carousel.querySelectorAll('[data-review-slide]'));
       const dots = Array.from(carousel.querySelectorAll('[data-review-dot]'));
@@ -495,6 +555,20 @@
 
       let current = 0;
       let timer = null;
+
+      function syncHeight() {
+        const activeSlide = slides[current];
+        if (!activeSlide) return;
+
+        const viewportStyles = viewport ? window.getComputedStyle(viewport) : null;
+        const viewportPadding = viewportStyles
+          ? parseFloat(viewportStyles.paddingTop) + parseFloat(viewportStyles.paddingBottom)
+          : 0;
+        const slideHeight = activeSlide.offsetHeight;
+
+        track.style.minHeight = `${slideHeight}px`;
+        if (viewport) viewport.style.minHeight = `${slideHeight + viewportPadding}px`;
+      }
 
       function goTo(index) {
         current = (index + slides.length) % slides.length;
@@ -513,6 +587,8 @@
           dot.classList.toggle('reviewDotActive', active);
           dot.setAttribute('aria-current', active ? 'true' : 'false');
         });
+
+        window.requestAnimationFrame(syncHeight);
       }
 
       function stop() {
@@ -521,6 +597,7 @@
       }
 
       function start() {
+        if (!REVIEW_AUTO_SCROLL) return;
         stop();
         timer = window.setInterval(() => goTo(current + 1), 5200);
       }
@@ -552,6 +629,7 @@
       carousel.addEventListener('mouseleave', start);
       carousel.addEventListener('focusin', stop);
       carousel.addEventListener('focusout', start);
+      window.addEventListener('resize', syncHeight);
 
       goTo(0);
       start();
